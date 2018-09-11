@@ -4,8 +4,8 @@ const _ = require('lodash');
 
 const rMatchIndexVersion = /-v([0-9]+)$/;
 
-async function getAliasVersion(esClient, index) {
-  return await esClient.indices
+function getAliasVersion(esClient, index) {
+  return esClient.indices
     .getAlias({name: index})
     .then(res => {
       const aliases = Object.keys(res);
@@ -39,47 +39,49 @@ async function getIndexVersions(esClient, index) {
     .compact()
     .map(i => i[1])
     .map(_.parseInt)
-    .sortBy()
+    .sort((a, b) => b - a)
     .value();
 }
 
-async function getMapping(esClient, index) {
-  const indexInfo = await esClient.indices.get({index});
-
-  // Only grab settings and mappings, the other info we don't need (aliases=manual, warmers we don't use)
-  return {
-    settings: indexInfo[index].settings,
-    mappings: indexInfo[index].mappings
-  };
+// Retrieve mapping and only grab settings and mappings, the other info
+// we don't need (aliases=manual, warmers we don't use)
+function getMapping(esClient, index) {
+  return esClient.indices.get({index})
+    .then(indexInfo => ({
+      settings: indexInfo[index].settings,
+      mappings: indexInfo[index].mappings
+    }));
 }
 
-async function createIndex(esClient, targetIndex, mapping) {
-  return await esClient.indices.create({
+function createIndex(esClient, targetIndex, mapping) {
+  return esClient.indices.create({
     index: targetIndex,
     body: mapping
   });
 }
 
-async function deleteIndex(esClient, targetIndex) {
-  return await esClient.indices.delete({
+function deleteIndex(esClient, targetIndex) {
+  return esClient.indices.delete({
     index: targetIndex
   });
 }
 
-async function updateAlias(esClient, alias, currFeederIndex, nextFeederIndex) {
+function updateAlias(esClient, alias, currFeederIndex, nextFeederIndex) {
   const actions = [{add: {index: nextFeederIndex, alias}}];
 
   if (currFeederIndex) {
     actions.push({remove: {index: currFeederIndex, alias}});
   }
 
-  return await esClient.indices.updateAliases({
+  return esClient.indices.updateAliases({
     body: {actions}
   });
 }
 
 function prepareSynonymsMapping(mapping, synonyms) {
-  const filters = _.get(mapping, 'settings.index.analysis.filter');
+
+  // If the mapping was retrieved from elasticsearch, the path is slightly different than the mapping from file.
+  const filters = _.get(mapping, 'settings.index.analysis.filter') || _.get(mapping, 'settings.analysis.filter', {});
 
   prepareSynonymFilter(filters, 'synonyms', synonyms.synonyms);
   prepareSynonymFilter(filters, 'pre_synonyms', synonyms.preFile);
