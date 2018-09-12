@@ -16,7 +16,7 @@ module.exports = sinon => {
   return {
     ...stubs,
     _reset: () => _.forEach(stubs, stub => {
-      stub.reset()
+      stub.reset();
       stub.resetBehavior();
     })
   };

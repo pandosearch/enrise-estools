@@ -12,5 +12,5 @@ before_script:
 
 test:
   script:
+    - npm run lint
     - npm test
-    # - npm run lint

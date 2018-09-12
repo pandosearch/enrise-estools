@@ -8,7 +8,7 @@
     "url": "https://gitlab.enrise.com/Enrise/estooling"
   },
   "scripts": {
-    "lint": "eslint",
+    "lint": "eslint src/ test/",
     "test": "mocha ./test/**/*.spec.js"
   },
   "author": "Joram Ruitenschild",

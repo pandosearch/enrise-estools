@@ -1,5 +1,8 @@
 'use strict';
 
+/* global describe, beforeEach, it */
+/* eslint-disable camelcase */
+
 const _ = require('lodash');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
@@ -12,7 +15,8 @@ const mochaAsync = fn => done => {
     .catch(done);
 };
 
-describe('upgrade', () => {  const helpers = require('./helpers.stubs')(sinon);
+describe('upgrade', () => {
+  const helpers = require('./helpers.stubs')(sinon);
   const {
     getAliasVersion,
     getIndexVersions,
@@ -140,7 +144,7 @@ describe('upgrade', () => {  const helpers = require('./helpers.stubs')(sinon);
 
     try {
       await upgrade(esClient, 'enrise.nl-nl', options);
-      done(new Error('expected upgrade to fail with an error'));
+      throw new Error('expected upgrade to fail with an error');
     } catch (err) {
       chai.expect(getAliasVersion).to.have.not.been.called;
       chai.expect(getIndexVersions).to.have.not.been.called;
@@ -195,46 +199,44 @@ describe('upgrade', () => {  const helpers = require('./helpers.stubs')(sinon);
 
   it('retrieves the existing synonyms if no synonyms are provided, useExistingSynonyms is true ' +
     'and the current feeder- version is higher than 1', mochaAsync(async () => {
-      const otherMapping = _.set({}, 'settings.index.analysis.filter', filter);
+    const otherMapping = _.set({}, 'settings.index.analysis.filter', filter);
 
-      const options = {
-        currentVersion: 3,
-        targetVersion: 4,
-        useExistingSynonyms: true
-      };
- 
-      getMapping.onCall(0).returns(mapping);
-      getMapping.onCall(1).returns(otherMapping);
+    const options = {
+      currentVersion: 3,
+      targetVersion: 4,
+      useExistingSynonyms: true
+    };
 
-      await upgrade(esClient, 'enrise.nl-nl', options);
-      chai.expect(getAliasVersion).to.have.not.been.called;
-      chai.expect(getIndexVersions).to.have.not.been.called;
-      chai.expect(getMapping).to.have.been.calledTwice;
-      chai.expect(prepareSynonymsMapping).to.have.been.calledOnce;
-      chai.expect(prepareSynonymsMapping.getCall(0).args).to.deep.equal([mapping, {
-        synonyms: ['some,synonyms'],
-        preFile: ['pre_some,pre_synonyms']
-      }]);
-      chai.expect(createIndex).to.have.been.calledWith(esClient, 'enrise.nl-nl-v4', mapping);
-      chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
-        'enrise.nl-nl-v3', 'enrise.nl-nl-v4');
-    }));
+    getMapping.onCall(0).returns(mapping);
+    getMapping.onCall(1).returns(otherMapping);
+
+    await upgrade(esClient, 'enrise.nl-nl', options);
+    chai.expect(getAliasVersion).to.have.not.been.called;
+    chai.expect(getIndexVersions).to.have.not.been.called;
+    chai.expect(getMapping).to.have.been.calledTwice;
+    chai.expect(prepareSynonymsMapping).to.have.been.calledOnce;
+    chai.expect(prepareSynonymsMapping.getCall(0).args).to.deep.equal([mapping, {
+      synonyms: ['some,synonyms'],
+      preFile: ['pre_some,pre_synonyms']
+    }]);
+    chai.expect(createIndex).to.have.been.calledWith(esClient, 'enrise.nl-nl-v4', mapping);
+    chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
+      'enrise.nl-nl-v3', 'enrise.nl-nl-v4');
+  }));
 
   it('does not retrieve the existing synonyms if synonyms are provided, useExistingSynonyms is true ' +
     'and the current feeder- version is higher than 1', mochaAsync(async () => {
-      const otherMapping = _.set({}, 'settings.index.analysis.filter', filter);
+    const options = {
+      currentVersion: 3,
+      targetVersion: 4,
+      useExistingSynonyms: true,
+      mapping,
+      synonyms
+    };
 
-      const options = {
-        currentVersion: 3,
-        targetVersion: 4,
-        useExistingSynonyms: true,
-        mapping,
-        synonyms
-      };
-
-      await upgrade(esClient, 'enrise.nl-nl', options);
-      chai.expect(getMapping).to.not.have.been.called;
-    }));
+    await upgrade(esClient, 'enrise.nl-nl', options);
+    chai.expect(getMapping).to.not.have.been.called;
+  }));
 
   it('it does not apply the synonyms onto the mapping if synonyms are not provided', mochaAsync(async () => {
     const options = {
@@ -251,20 +253,21 @@ describe('upgrade', () => {  const helpers = require('./helpers.stubs')(sinon);
       'enrise.nl-nl-v3', 'enrise.nl-nl-v4');
   }));
 
-  it('it does not apply the synonyms onto the mapping if synonyms are not retrieved from the index', mochaAsync(async () => {
-    const options = {
-      currentVersion: 3,
-      targetVersion: 4,
-      mapping,
-      useExistingSynonyms: true
-    };
+  it('it does not apply the synonyms onto the mapping if synonyms are not retrieved from the index',
+    mochaAsync(async () => {
+      const options = {
+        currentVersion: 3,
+        targetVersion: 4,
+        mapping,
+        useExistingSynonyms: true
+      };
 
-    getMapping.returns({});
-    await upgrade(esClient, 'enrise.nl-nl', options);
-    chai.expect(getMapping).to.have.been.calledOnce;
-    chai.expect(prepareSynonymsMapping).to.not.have.been.called;
-    chai.expect(createIndex).to.have.been.calledWith(esClient, 'enrise.nl-nl-v4', mapping);
-    chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
-      'enrise.nl-nl-v3', 'enrise.nl-nl-v4');
-  }));
+      getMapping.returns({});
+      await upgrade(esClient, 'enrise.nl-nl', options);
+      chai.expect(getMapping).to.have.been.calledOnce;
+      chai.expect(prepareSynonymsMapping).to.not.have.been.called;
+      chai.expect(createIndex).to.have.been.calledWith(esClient, 'enrise.nl-nl-v4', mapping);
+      chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
+        'enrise.nl-nl-v3', 'enrise.nl-nl-v4');
+    }));
 });
