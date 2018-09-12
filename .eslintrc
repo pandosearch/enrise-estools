@@ -1,0 +1,7 @@
+{
+  "root": true,
+  "extends": ["eslint-config-mm"],
+  "parserOptions": {
+    "ecmaVersion": 2018
+  }
+}
