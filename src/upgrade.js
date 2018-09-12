@@ -41,6 +41,10 @@ module.exports = async function (esClient, index, options) {
     options.mapping = await helpers.getMapping(esClient, currFeederAlias);
   }
 
+  if (!options.mapping) {
+    throw new Error('No mapping found.');
+  }
+
   // Grab the feeder- synonyms if the existing feeder- version is 1 or more.
   if (!options.synonyms && options.useExistingSynonyms && options.currentVersion >= 1) {
     const feederMapping = await helpers.getMapping(esClient, currFeederAlias);
@@ -68,4 +72,6 @@ module.exports = async function (esClient, index, options) {
 
     throw err;
   }
+
+  return options;
 };
