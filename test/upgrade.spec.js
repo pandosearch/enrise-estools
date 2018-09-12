@@ -49,29 +49,22 @@ describe('upgrade', () => {
     chai.expect(upgrade).to.be.a('Function');
   });
 
-  it('throws an error if getAliasVersion could not find an alias version', mochaAsync(async () => {
+  // it('throws an error if getAliasVersion could not find an alias version', mochaAsync(async () => {
+  it('throws an error if currentVersion is not provided, it cannot be found from feeder- alias and no mapping was ' +
+    'provided', mochaAsync(async () => {
+    const options = {
+      targetVersion: 4
+    };
+
     getAliasVersion.returns(null);
-    getIndexVersions.returns([1, 2, 3]);
 
     try {
-      await upgrade(esClient, 'enrise.nl-nl', {});
+      await upgrade(esClient, 'enrise.nl-nl', options);
       throw new Error('expected upgrade to fail with an error');
     } catch (err) {
       chai.expect(err).to.be.an.instanceof(Error);
-      chai.expect(err.message).to.equal('No existing index found.');
-    }
-  }));
-
-  it('throws an error if getIndexVersions could not find any indices', mochaAsync(async () => {
-    getAliasVersion.returns(3);
-    getIndexVersions.returns([]);
-
-    try {
-      await upgrade(esClient, 'enrise.nl-nl', {});
-      throw new Error('expected upgrade to fail with an error');
-    } catch (err) {
-      chai.expect(err).to.be.an.instanceof(Error);
-      chai.expect(err.message).to.equal('No existing index found.');
+      chai.expect(err.message).to.equal('Mapping must be provided, if there is no existing feeder- alias to ' +
+        'retrieve the mapping from.');
     }
   }));
 
@@ -110,6 +103,25 @@ describe('upgrade', () => {
     chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
       'enrise.nl-nl-v3', 'enrise.nl-nl-v4');
   }));
+
+  it('calls all functions and defaults targetVersion to 1 if it was not provided, and not deviated from the indices',
+    mochaAsync(async () => {
+      const options = {
+        mapping
+      };
+
+      getAliasVersion.returns(null);
+      getIndexVersions.returns([]);
+
+      await upgrade(esClient, 'enrise.nl-nl', options);
+      chai.expect(getAliasVersion).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl');
+      chai.expect(getIndexVersions).to.have.calledWith(esClient, 'enrise.nl-nl');
+      chai.expect(getMapping).to.have.not.been.called;
+      chai.expect(prepareSynonymsMapping).to.not.have.been.called;
+      chai.expect(createIndex).to.have.been.calledWith(esClient, 'enrise.nl-nl-v1', mapping);
+      chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
+        null, 'enrise.nl-nl-v1');
+    }));
 
   it('always uses the latest index version, not the version of the feeder for the next index', mochaAsync(async () => {
     const options = {
@@ -217,7 +229,7 @@ describe('upgrade', () => {
     chai.expect(prepareSynonymsMapping).to.have.been.calledOnce;
     chai.expect(prepareSynonymsMapping.getCall(0).args).to.deep.equal([mapping, {
       synonyms: ['some,synonyms'],
-      preFile: ['pre_some,pre_synonyms']
+      preSynonyms: ['pre_some,pre_synonyms']
     }]);
     chai.expect(createIndex).to.have.been.calledWith(esClient, 'enrise.nl-nl-v4', mapping);
     chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
@@ -236,6 +248,20 @@ describe('upgrade', () => {
 
     await upgrade(esClient, 'enrise.nl-nl', options);
     chai.expect(getMapping).to.not.have.been.called;
+  }));
+
+  it('does not retrieve the existing synonyms if currentVersion does not yet exist', mochaAsync(async () => {
+    const options = {
+      useExistingSynonyms: true,
+      mapping
+    };
+
+    getAliasVersion.returns(null);
+    getIndexVersions.returns([]);
+
+    await upgrade(esClient, 'enrise.nl-nl', options);
+    chai.expect(getMapping).to.not.have.been.called;
+    chai.expect(prepareSynonymsMapping).to.not.have.been.called;
   }));
 
   it('it does not apply the synonyms onto the mapping if synonyms are not provided', mochaAsync(async () => {

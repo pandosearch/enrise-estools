@@ -11,8 +11,8 @@ const helpers = require('./helpers');
 //   - targetVersion: integer | new version number, by default uses the highest $index version + 1
 //   - prefix: string, default:'feeder-' | prefix for feeder index
 //   - mapping: object, default:current feeder-mapping | mapping to use for the new index
-//   - synonyms: object | synonyms to use for the new index, will overwrite synonyms and pre_synonyms in
-//                        the mapping with inline synonyms
+//   - synonyms: object={synonyms: [], preSynonyms: []} | synonyms to use for the new index, will overwrite
+//                       synonyms and pre_synonyms in the mapping with inline synonyms
 //   - useExistingSynonyms: boolean | uses the existing feeder-synonyms for the new index
 module.exports = async function (esClient, index, options) {
   options = _.merge({prefix: 'feeder-'}, options);
@@ -20,21 +20,20 @@ module.exports = async function (esClient, index, options) {
   // Set the current feeder- version if it isn't set yet.
   if (!options.currentVersion) {
     options.currentVersion = await helpers.getAliasVersion(esClient, `${options.prefix}${index}`);
-  } else { /* Should we validate that the option.currentVersion is equal to the feeder- version? */ }
+  }
+
+  if (!options.currentVersion && !options.mapping) {
+    throw new Error('Mapping must be provided, if there is no existing feeder- alias to retrieve the mapping from.');
+  }
 
   // Set the target feeder- version if it isn't set yet.
   if (!options.targetVersion) {
     const indexVersion = await helpers.getIndexVersions(esClient, index)[0];
 
-    options.targetVersion = indexVersion ? indexVersion + 1 : null;
-  } else { /* Should we validate that the option.targetVersion is higher than the highest index version? */ }
-
-  // Guard against no versions being available.
-  if (!options.currentVersion || !options.targetVersion) {
-    throw new Error('No existing index found.');
+    options.targetVersion = indexVersion ? indexVersion + 1 : 1;
   }
 
-  const currFeederAlias = `${index}-v${options.currentVersion}`;
+  const currFeederAlias = options.currentVersion ? `${index}-v${options.currentVersion}` : null;
   const nextFeederAlias = `${index}-v${options.targetVersion}`;
 
   // Always retrieve the existing feeder- mapping if no mapping was given.
@@ -47,14 +46,14 @@ module.exports = async function (esClient, index, options) {
   }
 
   // Grab the feeder- synonyms if the existing feeder- version is 1 or more.
-  if (!options.synonyms && options.useExistingSynonyms && options.currentVersion >= 1) {
+  if (!options.synonyms && options.useExistingSynonyms && currFeederAlias) {
     const feederMapping = await helpers.getMapping(esClient, currFeederAlias);
     const filters = _.get(feederMapping, 'settings.index.analysis.filter', {});
     const synonyms = _.get(filters, 'synonyms.synonyms');
-    const preFile = _.get(filters, 'pre_synonyms.synonyms');
+    const preSynonyms = _.get(filters, 'pre_synonyms.synonyms');
 
-    if (synonyms || preFile) {
-      options.synonyms = {synonyms, preFile};
+    if (synonyms || preSynonyms) {
+      options.synonyms = {synonyms, preSynonyms};
     }
   }
 

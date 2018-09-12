@@ -26,10 +26,10 @@ estools.upgrade(esClient, index, options);
 
 ### `helpers.getAliasVersion` -> int | Retrieve the version of an alias
 ```
-estools.helpers.getAliasVersion(esClient, index);
+estools.helpers.getAliasVersion(esClient, alias);
 
 @param1: elasticsearch client
-@param2: string | index
+@param2: string | alias
 ```
 
 ### `helpers.getIndexVersions` -> [int] | Retrieve all versions (descending) of an index
@@ -39,3 +39,9 @@ estools.helpers.getIndexVersions(esClient, index);
 @param1: elasticsearch client
 @param2: string | index
 ```
+
+# Todo
+- [ ] Switch function - to move the feeder- alias to the regular alias.
+- [ ] Reindex function - for reindexing between two different indices or aliases.
+- [ ] CLI tooling. When installing, this should be placed inside `./node_modules/.bin`.
+- [ ] Improve description

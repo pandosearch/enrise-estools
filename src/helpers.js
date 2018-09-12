@@ -4,9 +4,9 @@ const _ = require('lodash');
 
 const rMatchIndexVersion = /-v([0-9]+)$/;
 
-function getAliasVersion(esClient, index) {
+function getAliasVersion(esClient, alias) {
   return esClient.indices
-    .getAlias({name: index})
+    .getAlias({name: alias})
     .then(res => {
       const aliases = Object.keys(res);
       if (aliases.length > 1) {
@@ -37,8 +37,7 @@ async function getIndexVersions(esClient, index) {
     .keys()
     .map(i => rMatchIndexVersion.exec(i))
     .compact()
-    .map(i => i[1])
-    .map(_.parseInt)
+    .map(i => _.parseInt(i[1]))
     .sort((a, b) => b - a)
     .value();
 }
@@ -80,11 +79,11 @@ function updateAlias(esClient, alias, currFeederIndex, nextFeederIndex) {
 
 function prepareSynonymsMapping(mapping, synonyms) {
 
-  // If the mapping was retrieved from elasticsearch, the path is slightly different than the mapping from file.
-  const filters = _.get(mapping, 'settings.index.analysis.filter') || _.get(mapping, 'settings.analysis.filter', {});
+  // If the mapping was retrieved from elasticsearch, the path is slightly different from the mapping in the file.
+  const filters = _.get(mapping, 'settings.index.analysis.filter', _.get(mapping, 'settings.analysis.filter', {}));
 
   prepareSynonymFilter(filters, 'synonyms', synonyms.synonyms);
-  prepareSynonymFilter(filters, 'pre_synonyms', synonyms.preFile);
+  prepareSynonymFilter(filters, 'pre_synonyms', synonyms.preSynonyms);
 }
 
 function prepareSynonymFilter(filters, name, synonyms) {
