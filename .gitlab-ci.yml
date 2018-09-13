@@ -21,3 +21,13 @@ test:node:8:
 test:node:10:
   script:
     - npm test
+
+# Publish tagged versions to npm
+publish:
+  stage: deploy
+  only:
+    - tags
+    - triggers
+  script:
+    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}'>.npmrc
+    - npm publish
