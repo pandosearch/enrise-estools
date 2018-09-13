@@ -22,7 +22,7 @@ estools.upgrade(esClient, index, options);
   - targetVersion: integer | new version number, by default uses the highest $index version + 1
   - prefix: string, default:'feeder-' | prefix for feeder index
   - mapping: object, default:current feeder-mapping | mapping to use for the new index
-  - synonyms: object | synonyms to use for the new index, will overwrite synonyms and pre_synonyms in the mapping with inline synonyms
+  - synonyms: object={synonyms: [], preSynonyms: []} | synonyms to use for the new index, will overwrite synonyms and pre_synonyms in the mapping with inline synonyms
   - useExistingSynonyms: boolean | uses the existing feeder-synonyms for the new index
 ```
 
