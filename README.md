@@ -1,4 +1,6 @@
 # estooling
+[![coverage report](https://gitlab.enrise.com/Enrise/estooling/badges/master/coverage.svg)](https://gitlab.enrise.com/Enrise/estooling/commits/master)
+
 Elasticsearch tooling functions for managing indices and aliases. This can be used within an elasticsearch environment where a seperate index needs to be managed next to the live index. The script works by creating two aliases: a feeder-alias and a search-alias. Both are managed seperately. The former is used to fill an index and is set using the upgrade function. And the search-alias is set using the switch function.
 
 # API Documentation
