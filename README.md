@@ -7,7 +7,7 @@ This package is highly opiniated. Therefore it is use at your own risk.
 
 ## Usage
 ```
-npm install enrise-estools --save-prod
+npm install enrise-estools
 
 const estools = require('enrise-estools');
 ```
