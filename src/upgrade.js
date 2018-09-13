@@ -12,7 +12,7 @@ const helpers = require('./helpers');
 //   - prefix: string, default:'feeder-' | prefix for feeder index
 //   - mapping: object, default:current feeder-mapping | mapping to use for the new index
 //   - synonyms: object={synonyms: [], preSynonyms: []} | synonyms to use for the new index, will overwrite
-//                       synonyms and pre_synonyms in the mapping with inline synonyms
+//                       the filters synonyms and pre_synonyms in the mapping with inline synonyms
 //   - useExistingSynonyms: boolean | uses the existing feeder-synonyms for the new index
 module.exports = async function (esClient, index, options) {
   options = _.merge({prefix: 'feeder-'}, options);
