@@ -28,7 +28,7 @@ module.exports = async function (esClient, index, options) {
 
   // Set the target feeder- version if it isn't set yet.
   if (!options.targetVersion) {
-    const indexVersion = await helpers.getIndexVersions(esClient, index)[0];
+    const indexVersion = (await helpers.getIndexVersions(esClient, index))[0];
 
     options.targetVersion = indexVersion ? indexVersion + 1 : 1;
   }

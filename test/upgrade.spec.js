@@ -56,7 +56,7 @@ describe('upgrade', () => {
       targetVersion: 4
     };
 
-    getAliasVersion.returns(null);
+    getAliasVersion.resolves(null);
 
     try {
       await upgrade(esClient, 'enrise.nl-nl', options);
@@ -75,7 +75,7 @@ describe('upgrade', () => {
       mapping: null
     };
 
-    getMapping.returns(null);
+    getMapping.resolves(null);
 
     try {
       await upgrade(esClient, 'enrise.nl-nl', options);
@@ -110,8 +110,8 @@ describe('upgrade', () => {
         mapping
       };
 
-      getAliasVersion.returns(null);
-      getIndexVersions.returns([]);
+      getAliasVersion.resolves(null);
+      getIndexVersions.resolves([]);
 
       await upgrade(esClient, 'enrise.nl-nl', options);
       chai.expect(getAliasVersion).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl');
@@ -129,8 +129,8 @@ describe('upgrade', () => {
       synonyms
     };
 
-    getIndexVersions.returns([3, 2, 1]);
-    getMapping.returns(mapping);
+    getIndexVersions.resolves([3, 2, 1]);
+    getMapping.resolves(mapping);
 
     await upgrade(esClient, 'enrise.nl-nl', options);
 
@@ -152,7 +152,7 @@ describe('upgrade', () => {
       synonyms
     };
 
-    updateAlias.throws('failed');
+    updateAlias.rejects('failed');
 
     try {
       await upgrade(esClient, 'enrise.nl-nl', options);
@@ -175,7 +175,7 @@ describe('upgrade', () => {
       synonyms
     };
 
-    getAliasVersion.returns(3);
+    getAliasVersion.resolves(3);
     await upgrade(esClient, 'enrise.nl-nl', options);
     chai.expect(getAliasVersion).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl');
     chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
@@ -188,7 +188,7 @@ describe('upgrade', () => {
       synonyms
     };
 
-    getIndexVersions.returns([5, 2, 1]);
+    getIndexVersions.resolves([5, 2, 1]);
     await upgrade(esClient, 'enrise.nl-nl', options);
     chai.expect(getIndexVersions).to.have.been.calledWith(esClient, 'enrise.nl-nl');
     chai.expect(updateAlias).to.have.been.calledWith(esClient, 'feeder-enrise.nl-nl',
@@ -202,7 +202,7 @@ describe('upgrade', () => {
       synonyms
     };
 
-    getMapping.returns(otherMapping);
+    getMapping.resolves(otherMapping);
     await upgrade(esClient, 'enrise.nl-nl', options);
     chai.expect(getMapping).to.have.been.calledWith(esClient, 'enrise.nl-nl-v3');
     chai.expect(createIndex).to.not.have.been.calledWith(esClient, 'enrise.nl-nl-v4', mapping);
@@ -219,8 +219,8 @@ describe('upgrade', () => {
       useExistingSynonyms: true
     };
 
-    getMapping.onCall(0).returns(mapping);
-    getMapping.onCall(1).returns(otherMapping);
+    getMapping.onCall(0).resolves(mapping);
+    getMapping.onCall(1).resolves(otherMapping);
 
     await upgrade(esClient, 'enrise.nl-nl', options);
     chai.expect(getAliasVersion).to.have.not.been.called;
@@ -256,8 +256,8 @@ describe('upgrade', () => {
       mapping
     };
 
-    getAliasVersion.returns(null);
-    getIndexVersions.returns([]);
+    getAliasVersion.resolves(null);
+    getIndexVersions.resolves([]);
 
     await upgrade(esClient, 'enrise.nl-nl', options);
     chai.expect(getMapping).to.not.have.been.called;
@@ -288,7 +288,7 @@ describe('upgrade', () => {
         useExistingSynonyms: true
       };
 
-      getMapping.returns({});
+      getMapping.resolves({});
       await upgrade(esClient, 'enrise.nl-nl', options);
       chai.expect(getMapping).to.have.been.calledOnce;
       chai.expect(prepareSynonymsMapping).to.not.have.been.called;
