@@ -23,6 +23,7 @@ test:node:8:
 
 test:node:10:
   stage: test
+  image: node:10
   script:
     - npm test
 
