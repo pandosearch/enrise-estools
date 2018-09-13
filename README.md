@@ -1,7 +1,9 @@
-# estooling
+# Enrise estools
 [![coverage report](https://gitlab.enrise.com/Enrise/estooling/badges/master/coverage.svg)](https://gitlab.enrise.com/Enrise/estooling/commits/master)
 
 Elasticsearch tooling functions for managing indices and aliases. This can be used within an elasticsearch environment where a seperate index needs to be managed next to the live index. The script works by creating two aliases: a feeder-alias and a search-alias. Both are managed seperately. The former is used to fill an index and is set using the upgrade function. And the search-alias is set using the switch function.
+
+This package is highly opiniated. Therefore it is use at your own risk.
 
 # API Documentation
 ```
@@ -22,7 +24,7 @@ estools.upgrade(esClient, index, options);
   - targetVersion: integer | new version number, by default uses the highest $index version + 1
   - prefix: string, default:'feeder-' | prefix for feeder index
   - mapping: object, default:current feeder-mapping | mapping to use for the new index
-  - synonyms: object={synonyms: [], preSynonyms: []} | synonyms to use for the new index, will overwrite synonyms and pre_synonyms in the mapping with inline synonyms
+  - synonyms: object={synonyms: [], preSynonyms: []} | synonyms to use for the new index, will overwrite the filters synonyms and pre_synonyms in the mapping with inline synonyms
   - useExistingSynonyms: boolean | uses the existing feeder-synonyms for the new index
 ```
 

@@ -1,5 +1,5 @@
 {
-  "name": "enrise-estooling",
+  "name": "enrise-estools",
   "version": "0.0.1",
   "description": "Elasticsearch tooling functions for managing indices and aliases.",
   "main": "index.js",
@@ -12,7 +12,7 @@
     "test": "istanbul cover _mocha -- -R spec ./test/**/*.spec.js"
   },
   "author": "Joram Ruitenschild",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.10"
   },
