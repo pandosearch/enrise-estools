@@ -5,7 +5,7 @@ Elasticsearch tooling functions for managing indices and aliases. This can be us
 
 This package is highly opiniated. Therefore it is use at your own risk.
 
-# API Documentation
+## API Documentation
 ```
 const estools = require('enrise-estooling');
 ```
@@ -44,7 +44,14 @@ estools.helpers.getIndexVersions(esClient, index);
 @param2: string | index
 ```
 
-# Todo
+## Publishing a new version
+Ensure your working directory is clean. The following commands create a new version number by updating the package.json file and adding a git tag. Then push the new version with the tag to git, where GitLab CI will publish a new version.
+```
+npm version <newversion>
+git push --follow-tags
+```
+
+## Todo
 - [ ] Switch function - to move the feeder- alias to the regular alias.
 - [ ] Reindex function - for reindexing between two different indices or aliases.
 - [ ] CLI tooling. When installing, this should be placed inside `./node_modules/.bin`.
