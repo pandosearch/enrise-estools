@@ -10,7 +10,14 @@ stages:
 before_script:
   - npm install
 
-test:
+test:lint:  
   script:
     - npm run lint
+
+test:node:8:
+  script:
+    - npm test
+
+test:node:10:
+  script:
     - npm test
