@@ -6,25 +6,29 @@ cache:
 
 stages:
   - test
+  - publish
 
 before_script:
   - npm install
 
-test:lint:  
+test:lint:
+  stage: test
   script:
     - npm run lint
 
 test:node:8:
+  stage: test
   script:
     - npm test
 
 test:node:10:
+  stage: test
   script:
     - npm test
 
 # Publish tagged versions to npm
 publish:
-  stage: deploy
+  stage: publish
   only:
     - tags
     - triggers
