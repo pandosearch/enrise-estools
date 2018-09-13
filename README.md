@@ -5,10 +5,14 @@ Elasticsearch tooling functions for managing indices and aliases. This can be us
 
 This package is highly opiniated. Therefore it is use at your own risk.
 
+## Usage
+```
+npm install enrise-estools --save-prod
+
+const estools = require('enrise-estools');
+```
+
 ## API Documentation
-```
-const estools = require('enrise-estooling');
-```
 
 ### `upgrade` | Upgrade a feeder- alias
 Creates a new versioned index according to the mapping, and points the feeder- alias to it.
