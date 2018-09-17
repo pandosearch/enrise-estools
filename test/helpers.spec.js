@@ -340,5 +340,25 @@ describe('helpers', () => {
         other_filter: {}
       });
     });
+
+    it('leaves the synonyms untouched when no new synonyms are provided (mapping received from file)', () => {
+      helpers.prepareSynonymsMapping(mapping1, {});
+
+      chai.expect(mapping1.settings.analysis.filter).to.deep.equal({
+        synonyms: {synonyms: ['']},
+        pre_synonyms: {synonyms: ['']},
+        other_filter: {}
+      });
+    });
+
+    it('leaves the synonyms untouched when no new synonyms are provided (mapping received from the index)', () => {
+      helpers.prepareSynonymsMapping(mapping2, {});
+
+      chai.expect(mapping2.settings.index.analysis.filter).to.deep.equal({
+        synonyms: {synonyms: ['']},
+        pre_synonyms: {synonyms: ['']},
+        other_filter: {}
+      });
+    });
   });
 });
