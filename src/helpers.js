@@ -93,7 +93,7 @@ function prepareSynonymFilter(filters, name, synonyms) {
   if (filter.synonyms_path) { throw new Error(`synonyms_path property is not allowed on ${name} filter`); }
   if (!filter.synonyms) { throw new Error(`No synonyms property found on ${name} filter`); }
 
-  filter.synonyms = synonyms;
+  filter.synonyms = synonyms || filter.synonyms;
 }
 
 module.exports = {
