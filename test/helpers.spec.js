@@ -91,7 +91,7 @@ describe('helpers', () => {
       } catch (err) {
         chai.expect(esClient.indices.stats).to.be.calledWith({
           index: 'enrise.nl-nl-v*',
-          metric: 'indices'
+          metric: 'docs'
         });
         chai.expect(err).to.be.an.instanceof(Error);
         chai.expect(err.message).to.equal('Failed');
@@ -114,7 +114,7 @@ describe('helpers', () => {
 
       chai.expect(esClient.indices.stats).to.be.calledWith({
         index: 'enrise.nl-nl-v*',
-        metric: 'indices'
+        metric: 'docs'
       });
       chai.expect(result).to.deep.equal([6, 4, 3, 2]);
     }));

@@ -30,7 +30,7 @@ function getAliasVersion(esClient, alias) {
 async function getIndexVersions(esClient, index) {
   const result = await esClient.indices.stats({
     index: `${index}-v*`,
-    metric: 'indices'
+    metric: 'docs'
   });
 
   return _(result.indices)
