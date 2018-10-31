@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.enrise.com/Enrise/estooling"
+    "url": "https://gitlab.enrise.com/Enrise/estools"
   },
   "scripts": {
     "lint": "eslint src/ test/",
