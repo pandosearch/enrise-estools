@@ -50,6 +50,7 @@ estools.helpers.getIndexVersions(esClient, index);
 
 ## Publishing a new version
 Ensure your working directory is clean. The following commands create a new version number by updating the package.json file and adding a git tag. Then push the new version with the tag to git, where GitLab CI will publish a new version.
+Version should only be updated by npm version, do not manually update the version in package.json.
 ```
 npm version <newversion>
 git push --follow-tags
