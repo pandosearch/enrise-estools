@@ -54,6 +54,7 @@ function getMapping(esClient, index) {
       delete mapping.settings.index.creation_date;
       delete mapping.settings.index.uuid;
       delete mapping.settings.index.provided_name;
+      delete mapping.settings.index.version;
       return mapping;
     });
 }

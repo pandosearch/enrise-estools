@@ -141,7 +141,8 @@ describe('helpers', () => {
             uuid: 'a',
             provided_name: 'b',
             creation_date: 'f',
-            number_of_shards: '2'
+            number_of_shards: '2',
+            version: {created: '12321'}
           }},
           mappings: {the: 'mappings'},
           aliases: {the: 'aliases'},
