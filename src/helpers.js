@@ -51,10 +51,10 @@ function getMapping(esClient, index) {
       mappings: indexInfo[index].mappings
     }))
     .then(mapping => {
-      delete mapping.settings.index.creation_date
-      delete mapping.settings.index.uuid
-      delete mapping.settings.index.provided_name
-      return mapping
+      delete mapping.settings.index.creation_date;
+      delete mapping.settings.index.uuid;
+      delete mapping.settings.index.provided_name;
+      return mapping;
     });
 }
 
