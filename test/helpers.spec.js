@@ -134,10 +134,15 @@ describe('helpers', () => {
       }
     }));
 
-    it('retrieves the settings mapping from an index', mochaAsync(async () => {
+    it('retrieves the usefull settings mapping from an index', mochaAsync(async () => {
       esClient.indices.get.resolves({
         'enrise.nl-nl-v2': {
-          settings: {the: 'settings'},
+          settings: {index: {
+            uuid: 'a',
+            provided_name: 'b',
+            creation_date: 'f',
+            number_of_shards: '2'
+          }},
           mappings: {the: 'mappings'},
           aliases: {the: 'aliases'},
           warmers: true
@@ -148,7 +153,7 @@ describe('helpers', () => {
 
       chai.expect(esClient.indices.get).to.be.calledWith({index: 'enrise.nl-nl-v2'});
       chai.expect(result).to.deep.equal({
-        settings: {the: 'settings'},
+        settings: {index: {number_of_shards: '2'}},
         mappings: {the: 'mappings'}
       });
     }));

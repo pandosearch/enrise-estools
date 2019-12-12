@@ -49,7 +49,13 @@ function getMapping(esClient, index) {
     .then(indexInfo => ({
       settings: indexInfo[index].settings,
       mappings: indexInfo[index].mappings
-    }));
+    }))
+    .then(mapping => {
+      delete mapping.settings.index.creation_date
+      delete mapping.settings.index.uuid
+      delete mapping.settings.index.provided_name
+      return mapping
+    });
 }
 
 function createIndex(esClient, targetIndex, mapping) {
