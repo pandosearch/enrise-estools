@@ -44,7 +44,7 @@ async function getIndexVersions(esClient, index) {
 
 // Retrieve mapping and only grab settings and mappings, the other info
 // we don't need (aliases=manual, warmers we don't use)
-// Retrieves only those settings that we are allowed to write back
+// Scrubs those settings that elasticsearch does not accept as input when creating a new index
 function getMapping(esClient, index) {
   return esClient.indices.get({index})
     .then(indexInfo => ({
