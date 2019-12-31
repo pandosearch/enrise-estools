@@ -27,6 +27,12 @@ test:node:10:
   script:
     - npm test
 
+test:node:12:
+  stage: test
+  image: node:12
+  script:
+    - npm test
+
 # Publish tagged versions to npm
 publish:
   stage: publish
