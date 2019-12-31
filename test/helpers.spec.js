@@ -22,7 +22,7 @@ describe('helpers', () => {
   beforeEach(() => esClient._reset());
 
   describe('getAliasVersion', () => {
-    it('throws an error if multiple aliases are reseived', mochaAsync(async () => {
+    it('throws an error if multiple aliases are received', mochaAsync(async () => {
       esClient.indices.getAlias.resolves({
         'enrise.nl-nl-v1': {},
         'enrise.nl-nl-v2': {}
@@ -34,7 +34,7 @@ describe('helpers', () => {
       } catch (err) {
         chai.expect(esClient.indices.getAlias).to.be.calledWith({name: 'feeder-enrise.nl-nl'});
         chai.expect(err).to.be.an.instanceof(Error);
-        chai.expect(err.message).to.equal('Multiple aliases recieved');
+        chai.expect(err.message).to.equal('Multiple aliases received');
       }
     }));
     it('throws an error if getAlias fails', mochaAsync(async () => {

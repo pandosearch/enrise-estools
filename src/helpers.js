@@ -10,7 +10,7 @@ function getAliasVersion(esClient, alias) {
     .then(res => {
       const aliases = Object.keys(res);
       if (aliases.length > 1) {
-        throw new Error('Multiple aliases recieved');
+        throw new Error('Multiple aliases received');
       }
 
       const indexMatch = rMatchIndexVersion.exec(aliases[0]);
