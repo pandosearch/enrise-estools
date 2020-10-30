@@ -87,9 +87,12 @@ function prepareSynonymsMapping(mapping, synonyms) {
 }
 
 function preparePreSynonymsFilters(filters, preSynonyms) {
-  const pre_synonyms_targets = _.filter(['pre_synonyms', 'pre_synonyms_search', 'pre_synonyms_index'], property => _.has(filters, property))
-  if (_.isEmpty(pre_synonyms_targets)) { throw new Error(`No pre_synonyms, pre_synonyms_search or pre_synonyms_index filter found`); }
-  _.each(pre_synonyms_targets, target => prepareSynonymFilter(filters, target, preSynonyms));
+  const preSynonymsTargets = _.filter(['pre_synonyms', 'pre_synonyms_search', 'pre_synonyms_index'],
+    property => _.has(filters, property));
+  if (_.isEmpty(preSynonymsTargets)) {
+    throw new Error('No pre_synonyms, pre_synonyms_search or pre_synonyms_index filter found');
+  }
+  _.each(preSynonymsTargets, target => prepareSynonymFilter(filters, target, preSynonyms));
 }
 
 function prepareSynonymFilter(filters, name, synonyms) {
