@@ -360,5 +360,46 @@ describe('helpers', () => {
         other_filter: {}
       });
     });
+
+    it('will use pre_synonyms_search when it is the only available target', () => {
+      delete mapping1.settings.analysis.filter.pre_synonyms;
+      mapping1.settings.analysis.filter.pre_synonyms_search = {synonyms: []};
+
+      helpers.prepareSynonymsMapping(mapping1, synonyms);
+
+      chai.expect(mapping1.settings.analysis.filter).to.deep.equal({
+        synonyms: {synonyms: ['some,synonyms']},
+        pre_synonyms_search: {synonyms: ['pre_some,pre_synonyms']},
+        other_filter: {}
+      });
+    });
+
+    it('will use pre_synonyms_index when it is the only available target', () => {
+      delete mapping1.settings.analysis.filter.pre_synonyms;
+      mapping1.settings.analysis.filter.pre_synonyms_index = {synonyms: []};
+
+      helpers.prepareSynonymsMapping(mapping1, synonyms);
+
+      chai.expect(mapping1.settings.analysis.filter).to.deep.equal({
+        synonyms: {synonyms: ['some,synonyms']},
+        pre_synonyms_index: {synonyms: ['pre_some,pre_synonyms']},
+        other_filter: {}
+      });
+    });
+
+    it('will use all pre_synonyms* properties when they are available', () => {
+      mapping1.settings.analysis.filter.pre_synonyms_index = {synonyms: []};
+      mapping1.settings.analysis.filter.pre_synonyms_search = {synonyms: []};
+
+      helpers.prepareSynonymsMapping(mapping1, synonyms);
+
+      chai.expect(mapping1.settings.analysis.filter).to.deep.equal({
+        synonyms: {synonyms: ['some,synonyms']},
+        pre_synonyms: {synonyms: ['pre_some,pre_synonyms']},
+        pre_synonyms_index: {synonyms: ['pre_some,pre_synonyms']},
+        pre_synonyms_search: {synonyms: ['pre_some,pre_synonyms']},
+        other_filter: {}
+      });
+    });
   });
 });

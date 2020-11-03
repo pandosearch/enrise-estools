@@ -1,6 +1,6 @@
 {
   "name": "enrise-estools",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Elasticsearch tooling functions for managing indices and aliases.",
   "main": "index.js",
   "repository": {

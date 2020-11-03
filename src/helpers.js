@@ -83,7 +83,16 @@ function prepareSynonymsMapping(mapping, synonyms) {
   const filters = _.get(mapping, 'settings.index.analysis.filter', _.get(mapping, 'settings.analysis.filter', {}));
 
   prepareSynonymFilter(filters, 'synonyms', synonyms.synonyms);
-  prepareSynonymFilter(filters, 'pre_synonyms', synonyms.preSynonyms);
+  preparePreSynonymsFilters(filters, synonyms.preSynonyms);
+}
+
+function preparePreSynonymsFilters(filters, preSynonyms) {
+  const preSynonymsTargets = _.filter(['pre_synonyms', 'pre_synonyms_search', 'pre_synonyms_index'],
+    property => _.has(filters, property));
+  if (_.isEmpty(preSynonymsTargets)) {
+    throw new Error('No pre_synonyms, pre_synonyms_search or pre_synonyms_index filter found');
+  }
+  _.each(preSynonymsTargets, target => prepareSynonymFilter(filters, target, preSynonyms));
 }
 
 function prepareSynonymFilter(filters, name, synonyms) {
