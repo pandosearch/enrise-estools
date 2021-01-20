@@ -10,7 +10,7 @@ function getAliasVersion(esClient, alias) {
     .then(res => {
       const aliases = Object.keys(res);
       if (aliases.length > 1) {
-        throw new Error('Multiple aliases recieved');
+        throw new Error('Multiple aliases received');
       }
 
       const indexMatch = rMatchIndexVersion.exec(aliases[0]);
@@ -44,12 +44,20 @@ async function getIndexVersions(esClient, index) {
 
 // Retrieve mapping and only grab settings and mappings, the other info
 // we don't need (aliases=manual, warmers we don't use)
+// Scrubs those settings that elasticsearch does not accept as input when creating a new index
 function getMapping(esClient, index) {
   return esClient.indices.get({index})
     .then(indexInfo => ({
       settings: indexInfo[index].settings,
       mappings: indexInfo[index].mappings
-    }));
+    }))
+    .then(mapping => {
+      delete mapping.settings.index.creation_date;
+      delete mapping.settings.index.uuid;
+      delete mapping.settings.index.provided_name;
+      delete mapping.settings.index.version;
+      return mapping;
+    });
 }
 
 function createIndex(esClient, targetIndex, mapping) {

@@ -22,7 +22,7 @@ describe('helpers', () => {
   beforeEach(() => esClient._reset());
 
   describe('getAliasVersion', () => {
-    it('throws an error if multiple aliases are reseived', mochaAsync(async () => {
+    it('throws an error if multiple aliases are received', mochaAsync(async () => {
       esClient.indices.getAlias.resolves({
         'enrise.nl-nl-v1': {},
         'enrise.nl-nl-v2': {}
@@ -34,7 +34,7 @@ describe('helpers', () => {
       } catch (err) {
         chai.expect(esClient.indices.getAlias).to.be.calledWith({name: 'feeder-enrise.nl-nl'});
         chai.expect(err).to.be.an.instanceof(Error);
-        chai.expect(err.message).to.equal('Multiple aliases recieved');
+        chai.expect(err.message).to.equal('Multiple aliases received');
       }
     }));
     it('throws an error if getAlias fails', mochaAsync(async () => {
@@ -134,10 +134,16 @@ describe('helpers', () => {
       }
     }));
 
-    it('retrieves the settings mapping from an index', mochaAsync(async () => {
+    it('retrieves the usefull settings mapping from an index', mochaAsync(async () => {
       esClient.indices.get.resolves({
         'enrise.nl-nl-v2': {
-          settings: {the: 'settings'},
+          settings: {index: {
+            uuid: 'a',
+            provided_name: 'b',
+            creation_date: 'f',
+            number_of_shards: '2',
+            version: {created: '12321'}
+          }},
           mappings: {the: 'mappings'},
           aliases: {the: 'aliases'},
           warmers: true
@@ -148,7 +154,7 @@ describe('helpers', () => {
 
       chai.expect(esClient.indices.get).to.be.calledWith({index: 'enrise.nl-nl-v2'});
       chai.expect(result).to.deep.equal({
-        settings: {the: 'settings'},
+        settings: {index: {number_of_shards: '2'}},
         mappings: {the: 'mappings'}
       });
     }));
